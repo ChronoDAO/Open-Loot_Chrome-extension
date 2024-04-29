@@ -1,42 +1,27 @@
 {
-  "name": "chronodao-open-loot-chrome-extension",
-  "displayName": "ChronoDAO - Open Loot",
-  "version": "1.0.0",
-  "description": "Giving super power to Open Loot",
-  "author": "Zet",
-  "packageManager": "npm@8.19.2",
+  "name": "chronodao-assets-tracker",
+  "displayName": "Chronodao assets tracker",
+  "version": "0.0.1",
+  "description": "Une application dont le but est de vous aider à suivre vos actifs sur OpenLoot, ainsi que leurs valeurs instantanées (basées sur le prix plancher ou la dernière vente).",
+  "author": "ChronoDAO",
   "scripts": {
     "dev": "plasmo dev",
-    "build": "plasmo build"
+    "build": "plasmo build",
+    "package": "plasmo package"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@headlessui/react": "^1.7.3",
-    "@heroicons/react": "^2.0.12",
-    "@mui/icons-material": "^5.10.9",
-    "@mui/lab": "^5.0.0-alpha.108",
-    "@mui/material": "^5.10.14",
-    "@tailwindcss/forms": "^0.5.3",
-    "@tailwindcss/typography": "^0.5.7",
-    "export-to-csv": "^0.2.1",
-    "material-react-table": "^1.2.9",
-    "plasmo": "0.56.0",
+    "plasmo": "0.85.2",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-minimal-pie-chart": "^8.4.0",
-    "tailwindcss": "^3.1.8"
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@plasmohq/prettier-plugin-sort-imports": "3.5.2",
-    "@types/chrome": "0.0.197",
-    "@types/node": "18.8.3",
-    "@types/react": "18.0.21",
-    "@types/react-dom": "18.0.6",
-    "autoprefixer": "^10.4.12",
-    "postcss": "^8.4.17",
-    "prettier": "2.7.1",
-    "typescript": "4.8.4"
+    "@ianvs/prettier-plugin-sort-imports": "4.1.1",
+    "@types/chrome": "0.0.258",
+    "@types/node": "20.11.5",
+    "@types/react": "18.2.48",
+    "@types/react-dom": "18.2.18",
+    "prettier": "3.2.4",
+    "typescript": "5.3.3"
   },
   "manifest": {
     "host_permissions": [
