@@ -1,0 +1,108 @@
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  // binaryTargets = ["rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "sqlite"
+  url       = "file:./dev.db"
+}
+
+model Player {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  nfts      NFT[]
+  sales     Sale[]  @relation("fromPlayer")
+  purchases Sale[]  @relation("toPlayer")
+  drops     Drop[]  @relation("toPlayer")
+  spent     Float   @default(0)
+  sold      Float   @default(0)
+  balance   Float   @default(0)
+  renter    Rental[] @relation("ownerName")
+  rentee    Rental[] @relation("renterName")
+}
+
+model NFT {
+  id          Int     @id @default(autoincrement())
+  composedId  String  @unique
+  issuedId    Int
+  lootDate    DateTime
+  owner       Player? @relation(fields: [ownerName], references: [name])
+  ownerName   String?
+  item        Item?   @relation(fields: [archetypeId], references: [archetypeId])
+  archetypeId String?
+  sales       Sale[]
+  drops       Drop[]
+  rentals Rental[]
+}
+
+model Item {
+  archetypeId    String      @id @unique
+  name           String      @unique
+  description    String?
+  imageUrl       String?
+  floorPrice     Float?
+  maxIssuance    Int
+  nfts           NFT[]
+  tags           Tag[]
+  rarity         Rarity?     @relation(fields: [rarityName], references: [name])
+  rarityName     String?
+  collectionName String?
+  optionName     String
+  categories     Category[]
+}
+
+model Tag {
+  name  String @id @unique
+  items Item[]
+  type String
+}
+
+model Rarity {
+  name  String @unique
+  items Item[]
+}
+
+model Category {
+  name  String @id @unique
+  items Item[]
+}
+
+model Sale {
+  id            Int      @id @default(autoincrement())
+  transactionId String   @unique
+  price         Float    @default(0)
+  date          DateTime
+  from          Player   @relation(fields: [fromPlayer], references: [name], name: "fromPlayer")
+  fromPlayer    String
+  to            Player   @relation(fields: [toPlayer], references: [name], name: "toPlayer")
+  toPlayer      String
+  nft           NFT      @relation(fields: [nftId], references: [composedId])
+  nftId         String
+}
+
+model Drop {
+  id         Int      @id @default(autoincrement())
+  date       DateTime
+  to         Player   @relation(fields: [toPlayer], references: [name], name: "toPlayer")
+  toPlayer   String
+  nft        NFT?     @relation(fields: [nftId], references: [id])
+  nftId      Int
+}
+
+model Rental {
+  id            Int      @id @default(autoincrement())
+  transactionId String   @unique
+  owner Player @relation(fields: [ownerName], references: [name], name: "ownerName")
+  ownerName String
+  nfts NFT[]
+  startdate DateTime
+  duration Int
+  price Float
+  renter Player @relation(fields: [renterName], references: [name], name: "renterName")
+  renterName String
+}
