@@ -2,15 +2,39 @@ import React, { useEffect, useState } from "react";
 
 function DeltaFlyerPage() {
   const [ingameItems, setIngameItems] = useState({ items: [] });
+  const [inmarketplaceItems, setInmarketplaceItems] = useState({ items: [] });
 
   useEffect(() => {
-    fetchData().then((data) => {
-      setIngameItems(data);
-    });
+    fetchIngameItems();
+    fetchInmarketplaceItems();
   }, []);
 
-  // Logging fetched data might not be necessary in the final code
+  const fetchIngameItems = async () => {
+    try {
+      const response = await fetch(
+        "https://api.openloot.com/v2/market/items/in-game?page=1&pageSize=50&sort=name%3Aasc"
+      );
+      const data = await response.json();
+      setIngameItems(data);
+    } catch (error) {
+      console.error("Error fetching ingame items:", error);
+    }
+  };
+
+  const fetchInmarketplaceItems = async () => {
+    try {
+      const response = await fetch(
+        "https://api.openloot.com/v2/market/items?page=1&pageSize=50&sort=name%3Aasc&status=unlocked"
+      );
+      const data = await response.json();
+      setInmarketplaceItems(data);
+    } catch (error) {
+      console.error("Error fetching marketplace items:", error);
+    }
+  };
+
   console.log(ingameItems);
+  console.log(inmarketplaceItems);
 
   return (
     <div
@@ -22,26 +46,22 @@ function DeltaFlyerPage() {
     >
       <h2>Delta Flyer Tab</h2>
       <p>This tab is only available on the Delta Flyer page.</p>
-      {/* Render items */}
+
+      {/* Render ingame items */}
+      <h3>Ingame Items</h3>
       {ingameItems &&
         ingameItems.items.map((item, i) => (
           <p key={i}>{item.metadata.name}</p>
         ))}
+
+      {/* Render marketplace items */}
+      <h3>Marketplace Items</h3>
+      {inmarketplaceItems &&
+        inmarketplaceItems.items.map((item, i) => (
+          <p key={i}>{item.metadata.name}</p>
+        ))}
     </div>
   );
-}
-
-async function fetchData() {
-  try {
-    const response = await fetch(
-      "https://api.openloot.com/v2/market/items/in-game?page=1&pageSize=50&sort=name%3Aasc"
-    );
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
-  }
 }
 
 export default DeltaFlyerPage;
