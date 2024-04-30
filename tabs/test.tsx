@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 function DeltaFlyerPage() {
   const [ingameItems, setIngameItems] = useState({ items: [] });
   const [inmarketplaceItems, setInmarketplaceItems] = useState({ items: [] });
+  const [inrentalItems, setInrentalItems] = useState({ items: [] });
 
   useEffect(() => {
     fetchIngameItems();
     fetchInmarketplaceItems();
+    fetchInrentalItems();
   }, []);
 
   const fetchIngameItems = async () => {
@@ -33,8 +35,21 @@ function DeltaFlyerPage() {
     }
   };
 
+  const fetchInrentalItems = async () => {
+    try {
+      const response = await fetch(
+        "https://api.openloot.com/v2/market/me/rentals?page=1&pageSize=10&sort=name%3Aasc&status=listed"
+      );
+      const data = await response.json();
+      setInrentalItems(data);
+    } catch (error) {
+      console.error("Error fetching rental items:", error);
+    }
+  };
+
   console.log(ingameItems);
   console.log(inmarketplaceItems);
+  console.log(inrentalItems);
 
   return (
     <div
@@ -50,15 +65,27 @@ function DeltaFlyerPage() {
       {/* Render ingame items */}
       <h3>Ingame Items</h3>
       {ingameItems &&
+        ingameItems.items &&
         ingameItems.items.map((item, i) => (
-          <p key={i}>{item.metadata.name}</p>
+          <p key={i}>{item.metadata && item.metadata.name}</p>
         ))}
 
       {/* Render marketplace items */}
       <h3>Marketplace Items</h3>
       {inmarketplaceItems &&
+        inmarketplaceItems.items &&
         inmarketplaceItems.items.map((item, i) => (
-          <p key={i}>{item.metadata.name}</p>
+          <p key={i}>{item.metadata && item.metadata.name}</p>
+        ))}
+
+      {/* Render rental items */}
+      <h3>Rental Items</h3>
+      {inrentalItems &&
+        inrentalItems.items &&
+        inrentalItems.items.map((rentalPack, i) => (
+          rentalPack.content.map((item, i) => (
+          <p key={i}>{item.metadata && item.metadata.name}</p>
+        ))
         ))}
     </div>
   );
