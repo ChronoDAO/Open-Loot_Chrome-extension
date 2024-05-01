@@ -4,11 +4,13 @@ function DeltaFlyerPage() {
   const [ingameItems, setIngameItems] = useState({ items: [] });
   const [inmarketplaceItems, setInmarketplaceItems] = useState({ items: [] });
   const [inrentalItems, setInrentalItems] = useState({ items: [] });
+  const [playerCollection, setPlayerCollection] = useState([]);
 
   useEffect(() => {
     fetchIngameItems();
     fetchInmarketplaceItems();
     fetchInrentalItems();
+    fetchPlayerCollection();
   }, []);
 
   const fetchIngameItems = async () => {
@@ -47,9 +49,44 @@ function DeltaFlyerPage() {
     }
   };
 
+  const fetchPlayerCollection = async () => {
+    try {
+      // Récupère les données depuis les endpoints
+      const ingameResponse = await fetch(
+        "https://api.openloot.com/v2/market/items/in-game?page=1&pageSize=50&sort=name%3Aasc"
+      );
+      const ingameData = await ingameResponse.json();
+
+      const marketplaceResponse = await fetch(
+        "https://api.openloot.com/v2/market/items?page=1&pageSize=50&sort=name%3Aasc&status=unlocked"
+      );
+      const marketplaceData = await marketplaceResponse.json();
+
+      const rentalResponse = await fetch(
+        "https://api.openloot.com/v2/market/me/rentals?page=1&pageSize=10&sort=name%3Aasc&status=listed"
+      );
+      const rentalData = await rentalResponse.json();
+
+      // Combine les données de tous les endpoints dans une seule collection
+      const allItems = [
+        ...ingameData.items,
+        ...marketplaceData.items,
+        ...rentalData.items.flatMap((rentalPack) =>
+          rentalPack.content.map((item) => item)
+        )
+      ];
+
+      // Met à jour l'état de la collection de joueur
+      setPlayerCollection(allItems);
+    } catch (error) {
+      console.error("Error fetching player collection:", error);
+    }
+  };
+
   console.log(ingameItems);
   console.log(inmarketplaceItems);
   console.log(inrentalItems);
+  console.log(playerCollection);
 
   return (
     <div
@@ -84,9 +121,15 @@ function DeltaFlyerPage() {
         inrentalItems.items &&
         inrentalItems.items.map((rentalPack, i) => (
           rentalPack.content.map((item, i) => (
-          <p key={i}>{item.metadata && item.metadata.name}</p>
-        ))
+            <p key={i}>{item.metadata && item.metadata.name}</p>
+          ))
         ))}
+
+      <h2>Player Collection</h2>
+      {/* Affiche les éléments de la collection */}
+      {playerCollection.map((item, index) => (
+        <p key={index}>{item.metadata && item.metadata.name}</p>
+      ))}
     </div>
   );
 }
