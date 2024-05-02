@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Button from '@mui/material/Button';
 
 function DeltaFlyerPage() {
   const [ingameItems, setIngameItems] = useState({ items: [] });
@@ -98,6 +100,7 @@ function DeltaFlyerPage() {
     >
       <h2>Delta Flyer Tab</h2>
       <p>This tab is only available on the Delta Flyer page.</p>
+      <Button variant="contained">Hello Material-UI</Button>
 
       {/* Render ingame items */}
       <h3>Ingame Items</h3>
