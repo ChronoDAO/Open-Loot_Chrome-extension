@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Button from '@mui/material/Button';
+import { PrismaClient } from '@prisma/client'
+import { type OpenLootRentalResponse, type OpenLootIngameResponse, type OpenLootMarketplaceResponse, type OpenlootNft } from "./types/openlootApi";
 
+const prisma = new PrismaClient()
 function DeltaFlyerPage() {
   const [ingameItems, setIngameItems] = useState({ items: [] });
   const [inmarketplaceItems, setInmarketplaceItems] = useState({ items: [] });
@@ -56,20 +59,20 @@ function DeltaFlyerPage() {
       const ingameResponse = await fetch(
         "https://api.openloot.com/v2/market/items/in-game?page=1&pageSize=50&sort=name%3Aasc"
       );
-      const ingameData = await ingameResponse.json();
+      const ingameData: OpenLootIngameResponse = await ingameResponse.json();
 
       const marketplaceResponse = await fetch(
         "https://api.openloot.com/v2/market/items?page=1&pageSize=50&sort=name%3Aasc&status=unlocked"
       );
-      const marketplaceData = await marketplaceResponse.json();
+      const marketplaceData: OpenLootMarketplaceResponse = await marketplaceResponse.json();
 
       const rentalResponse = await fetch(
         "https://api.openloot.com/v2/market/me/rentals?page=1&pageSize=10&sort=name%3Aasc&status=listed"
       );
-      const rentalData = await rentalResponse.json();
+      const rentalData: OpenLootRentalResponse = await rentalResponse.json();
 
       // Combine les données de tous les endpoints dans une seule collection
-      const allItems = [
+      const allItems: OpenlootNft = [
         ...ingameData.items,
         ...marketplaceData.items,
         ...rentalData.items.flatMap((rentalPack) =>
@@ -79,10 +82,21 @@ function DeltaFlyerPage() {
 
       // Met à jour l'état de la collection de joueur
       setPlayerCollection(allItems);
+      savePlayerCollection (allItems);
+
     } catch (error) {
       console.error("Error fetching player collection:", error);
     }
   };
+
+  const savePlayerCollection = async (collection: OpenlootNft[]) => {
+   let lastNft = collection[0];
+    prisma.nFT.create({
+      data: {
+        issuedId:7
+        
+      }
+    })
 
   console.log(ingameItems);
   console.log(inmarketplaceItems);
@@ -97,8 +111,8 @@ function DeltaFlyerPage() {
         padding: 16
       }}
     >
-      <h2>Delta Flyer Tab</h2>
-      <p>This tab is only available on the Delta Flyer page.</p>
+      <h2>Chrono Dao</h2>
+      <p>Chrono Dao.</p>
       <Button variant="contained">Hello Material-UI</Button>
 
       {/* Render ingame items */}
@@ -135,5 +149,5 @@ function DeltaFlyerPage() {
     </div>
   );
 }
-
+}
 export default DeltaFlyerPage;

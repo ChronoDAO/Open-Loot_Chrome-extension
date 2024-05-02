@@ -106,3 +106,4 @@ model Rental {
   renter Player @relation(fields: [renterName], references: [name], name: "renterName")
   renterName String
 }
+
